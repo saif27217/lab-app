@@ -37,6 +37,34 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {
+        "asyncRoutes": {
+          "web": true
+        }
+      },
+      "eas": {
+        "projectId": "fb0f61a7-010c-4d99-aa78-d3f4ceeed111"
+      }
+    },
+    "owner": "drsaifbiochems-team",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/fb0f61a7-010c-4d99-aa78-d3f4ceeed111"
+    },
+    "routes": [
+      {
+        "/": "src/app/index.tsx"
+      },
+      {
+        "/tests": "src/app/tests.tsx"
+      },
+      {
+        "/stats": "src/app/stats.tsx"
+      }
+    ]
   }
 }

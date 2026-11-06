@@ -1,27 +1,65 @@
+import { LinearGradient } from 'expo-linear-gradient';
 import { StyleSheet } from 'react-native';
 import { Text } from 'react-native';
+import { View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Link } from 'expo-router';
 
-import { formatReading } from '@/utils/format';
+import { LAB_TESTS } from '@/utils/labTests';
 
 export default function HomeScreen() {
   return (
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>lab-app</Text>
-      <Text style={styles.sample}>
-        {formatReading({ value: 42.1987, unit: 'mg/dL', decimals: 2 })}
-      </Text>
-      <Link href="/stats" style={styles.link}>
-        Open stats screen
-      </Link>
-    </SafeAreaView>
+    <LinearGradient style={styles.fill} colors={['#070D1A', '#10384C', '#070D1A']}>
+      <SafeAreaView style={styles.container}>
+        <View style={styles.card}>
+          <Text style={styles.title}>Vijaya Lab</Text>
+          <Text style={styles.subtitle}>Serum · urine · whole-blood tests</Text>
+          <View style={styles.badge}>
+            <Text style={styles.badgeNum}>{LAB_TESTS.length}</Text>
+            <Text style={styles.badgeLabel}>lab tests</Text>
+          </View>
+        </View>
+        <Link href="/tests" style={styles.linkCard}>
+          <Text style={styles.linkLabel}>Search lab tests</Text>
+        </Link>
+        <Link href="/stats" style={styles.linkCard}>
+          <Text style={styles.linkLabel}>Session stats</Text>
+        </Link>
+      </SafeAreaView>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, gap: 12 },
-  title: { fontSize: 28, marginBottom: 8 },
-  sample: { fontSize: 16 },
-  link: { alignSelf: 'stretch', padding: 12 },
+  fill: { flex: 1 },
+  container: { flex: 1, padding: 20, gap: 14 },
+  card: {
+    padding: 18,
+    gap: 6,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255,255,255,0.04)',
+    borderColor: 'rgba(255,255,255,0.16)',
+    borderWidth: 1,
+  },
+  title: { fontSize: 30, fontWeight: '700', color: '#E8F4FF' },
+  subtitle: { fontSize: 14, color: '#8FB8CC' },
+  badge: {
+    alignSelf: 'stretch',
+    padding: 12,
+    borderRadius: 14,
+    backgroundColor: 'rgba(103,232,249,0.08)',
+    borderColor: 'rgba(103,232,249,0.45)',
+    borderWidth: 1,
+  },
+  badgeNum: { fontSize: 26, fontWeight: '800', color: '#67E8F9' },
+  badgeLabel: { fontSize: 13, color: '#9FB8D4' },
+  linkCard: {
+    alignSelf: 'stretch',
+    padding: 14,
+    borderRadius: 16,
+    backgroundColor: 'rgba(255,255,255,0.04)',
+    borderColor: 'rgba(255,255,255,0.16)',
+    borderWidth: 1,
+  },
+  linkLabel: { fontSize: 17, color: '#BFE7FF' },
 });
