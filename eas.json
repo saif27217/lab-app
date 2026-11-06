@@ -1,6 +1,5 @@
 {
   "production": {
-    "channel": "production",
-    "sdk": "expo"
+    "channel": "production"
   }
 }
