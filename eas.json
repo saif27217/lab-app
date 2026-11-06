@@ -1,3 +1,5 @@
 {
-  "production": {}
+  "cli": {
+    "version": ">= 27.5.0"
+  }
 }
