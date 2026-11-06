@@ -1,56 +1,46 @@
-# Welcome to your Expo app 👋
+# lab-app — bare-bones Expo (SDK 58) React Native starter
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Minimal multi-screen Expo app used as a from-scratch reference scaffold
+(built and run on a headless Linux box, tested in Expo Go on Android).
 
-## Get started
+## Layout
 
-1. Install dependencies
-
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **src/app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```
+src/
+  app/
+    _layout.tsx        ThemeProvider (light/dark) + StatusBar
+    index.tsx          /        home screen, links to /stats
+    stats.tsx          /stats   second routed screen
+  hooks/
+    use-stopwatch.ts   RN-style custom hook (seconds since render)
+  utils/
+    format.ts          pure logic (formatReading) — unit-testable
+    format.test.ts     node:test suite
 ```
 
-This command will move the starter code to the **example** directory and create a blank **src/app** directory where you can start developing.
+## Run
 
-### Other setup steps
+```bash
+npm test                          # node --test on the pure utils layer
+npx tsc -p tsconfig.json --noEmit # full project typecheck
+npx expo start --port 8081        # dev server (Metro)
+```
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+Phone side (Expo Go, when the server runs on a remote box):
 
-## Learn more
+```bash
+ssh -N -L 8081:localhost:8081 user@vps   # from Termux / laptop
+# then in Expo Go: "Enter URL manually" -> http://localhost:8081
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+## Notes
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+- `create-expo --template empty` resolves to an unrelated npm package; the
+  default template + manual reset (`scripts/reset-project.js` or rm) is the
+  reliable path.
+- expo-router v58 `Link` prop is `href`, not `to`.
+- Test files are excluded from the app build (`tsconfig` exclude) because TS6
+  resolves `node:test`/`node:assert` types via package.json `types` field, not
+  `@types/node` alone.
+- Signed Expo tour tunnels require expo.dev login; an SSH port-forward works
+  with zero credentials.
