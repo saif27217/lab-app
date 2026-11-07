@@ -48,8 +48,8 @@ export default function TestsScreen() {
 }
 
 const styles = StyleSheet.create({
-  fill: { flex: 1 },
-  container: { flex: 1, padding: 16, gap: 12 },
+  fill: { flex: 1, backgroundColor: '#070D1A' },
+  container: { flex: 1, padding: 16, gap: 12, backgroundColor: '#070D1A' },
   header: { fontSize: 20, fontWeight: '700', color: '#E8F4FF' },
   searchBox: {
     flex: 1,

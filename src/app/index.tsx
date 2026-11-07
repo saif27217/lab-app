@@ -31,8 +31,8 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  fill: { flex: 1 },
-  container: { flex: 1, padding: 20, gap: 14 },
+  fill: { flex: 1, backgroundColor: '#070D1A' },
+  container: { flex: 1, padding: 20, gap: 14, backgroundColor: '#070D1A' },
   card: {
     padding: 18,
     gap: 6,
