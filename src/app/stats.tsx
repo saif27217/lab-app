@@ -4,26 +4,42 @@ import { Text } from 'react-native';
 import { View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { formatReading } from '@/utils/format';
-import { useStopwatch } from '@/hooks/use-stopwatch';
+import { LAB_TESTS } from '@/utils/labTests';
+
+function countMatching(pattern: RegExp) {
+  return LAB_TESTS.reduce((n, t) => pattern.test(t) ? n + 1 : n, 0);
+}
 
 export default function StatsScreen() {
-  const seconds = useStopwatch();
+  const urinal = countMatching(/URINARY/);
+  const hgb = countMatching(/\bHGB\b/);
+  const hcg = countMatching(/\bHCG\b/);
+  const other = LAB_TESTS.length - urinal - hgb - hcg;
+
   return (
     <LinearGradient style={styles.fill} colors={['#070D1A', '#10384C', '#070D1A']}>
       <SafeAreaView style={styles.container}>
-        <Text style={styles.title}>Session stats</Text>
+        <Text style={styles.title}>Catalog stats</Text>
         <View style={styles.card}>
-          <Text style={styles.big}>{seconds.toFixed(1)}</Text>
-          <Text style={styles.label}>seconds since boot</Text>
+          <Text style={styles.big}>{LAB_TESTS.length}</Text>
+          <Text style={styles.label}>tests on file</Text>
         </View>
         <View style={styles.card}>
-          <Text style={styles.big}>{formatReading({ value: 42.1987, unit: 'mg/dL', decimals: 2 })}</Text>
-          <Text style={styles.label}>sample serum reading</Text>
+          <Text style={styles.big}>{urinal}</Text>
+          <Text style={styles.label}>urine-based tests</Text>
         </View>
         <View style={styles.card}>
-          <Text style={styles.big}>{formatReading({ value: 3.0001, unit: 'mmol/L', decimals: 3 })}</Text>
-          <Text style={styles.label}>sample specimen reading</Text>
+          <Text style={styles.big}>{hgb}</Text>
+          <Text style={styles.label}>hemoglobin (HGB)</Text>
+        </View>
+        <View style={styles.card}>
+          <Text style={styles.big}>{hcg}</Text>
+          <Text style={styles.label}>human chorionic (HCG)</Text>
+        </View>
+        <View style={styles.footer}>
+          <Text style={styles.footerText}>
+            {other} more across serum, whole-blood, and immunoassay analytes
+          </Text>
         </View>
       </SafeAreaView>
     </LinearGradient>
@@ -45,4 +61,6 @@ const styles = StyleSheet.create({
   },
   big: { fontSize: 30, fontWeight: '800', color: '#67E8F9' },
   label: { fontSize: 13, color: '#9FB8D4' },
+  footer: { padding: 10, borderRadius: 12 },
+  footerText: { fontSize: 12, color: '#5F7A92' },
 });

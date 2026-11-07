@@ -3,7 +3,6 @@ import { StyleSheet } from 'react-native';
 import { Text } from 'react-native';
 import { View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Link } from 'expo-router';
 
 import { LAB_TESTS } from '@/utils/labTests';
 
@@ -19,12 +18,6 @@ export default function HomeScreen() {
             <Text style={styles.badgeLabel}>lab tests</Text>
           </View>
         </View>
-        <Link href="/tests" style={styles.linkCard}>
-          <Text style={styles.linkLabel}>Search lab tests</Text>
-        </Link>
-        <Link href="/stats" style={styles.linkCard}>
-          <Text style={styles.linkLabel}>Session stats</Text>
-        </Link>
       </SafeAreaView>
     </LinearGradient>
   );
