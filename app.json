@@ -1,6 +1,7 @@
 {
   "expo": {
     "name": "lab-app",
+    "displayName": "Vijaya Lab",
     "slug": "lab-app",
     "version": "1.0.0",
     "orientation": "portrait",
