@@ -42,3 +42,4 @@ example
 /ios
 /android
 *.log
+dist_serve/
