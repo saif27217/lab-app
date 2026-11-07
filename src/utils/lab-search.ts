@@ -36,7 +36,7 @@ export function vendorFor(t: Test): string {
   return t.b2b || '';
 }
 
-export function searchTests(query: string, limit = 15): Test[] {
+export function searchTests(query: string, limit = 200): Test[] {
   const q = query.trim().toLowerCase();
   if (!q) return [];
   const scored: [number, Test][] = [];

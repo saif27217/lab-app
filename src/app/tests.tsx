@@ -1,5 +1,6 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { StyleSheet } from 'react-native';
+import { ScrollView } from 'react-native';
 import { Text } from 'react-native';
 import { TextInput } from 'react-native';
 import { View } from 'react-native';
@@ -10,7 +11,7 @@ import { useState } from 'react';
 import { searchTests, highlightSegments, badgeFor, vendorFor, Test } from '@/utils/lab-search';
 import { LAB_TESTS } from '@/utils/labTests';
 
-const MAX_ROWS = 15;
+const MAX_ROWS = 60;
 
 function rowSegments(t: Test, q: string) {
   return highlightSegments(t.name, q).map((seg, i) => (
@@ -69,34 +70,37 @@ export default function TestsScreen() {
           <>
             <Text style={styles.matchLine}>
               {matches.length} match{matches.length === 1 ? '' : 'es'}
+              {matches.length > MAX_ROWS ? ` · showing first ${MAX_ROWS}, scroll for more` : ' · scroll for more'}
             </Text>
-            {matches.slice(0, MAX_ROWS).map((t, i) => (
-              <View key={i} style={styles.rowWrap}>
-                <Pressable
-                  accessibilityLabel={`${badgeFor(t)} ${t.name}. Open details`}
-                  accessibilityHint="Shows the full test details"
-                  onPress={() => setOpenId(t.name)}
-                  style={styles.pressRow}
-                >
-                  <Text style={styles.row}>
-                    {rowSegments(t, query)}
-                    <Text style={styles.badge}>
-                      {`  ${badgeFor(t)}${t.proc_type === 'OutSource' ? ` · ${vendorFor(t)}` : ''}`}
-                    </Text>
-                  </Text>
-                </Pressable>
-                {openId === t.name ? (
-                  <View style={styles.detailCard}>
-                    {detailLines(t).map((row, j) => (
-                      <Text key={j} style={styles.detailLine}>
-                        <Text style={styles.detailLabel}>{row.label}: </Text>
-                        <Text style={styles.detailValue}>{row.value}</Text>
+            <ScrollView style={styles.resultsScroll}>
+              {matches.slice(0, MAX_ROWS).map((t, i) => (
+                <View key={i} style={styles.rowWrap}>
+                  <Pressable
+                    accessibilityLabel={`${badgeFor(t)} ${t.name}. Open details`}
+                    accessibilityHint="Shows the full test details"
+                    onPress={() => setOpenId(t.name)}
+                    style={styles.pressRow}
+                  >
+                    <Text style={styles.row}>
+                      {rowSegments(t, query)}
+                      <Text style={styles.badge}>
+                        {`  ${badgeFor(t)}${t.proc_type === 'OutSource' ? ` · ${vendorFor(t)}` : ''}`}
                       </Text>
-                    ))}
-                  </View>
-                ) : null}
-              </View>
-            ))}
+                    </Text>
+                  </Pressable>
+                  {openId === t.name ? (
+                    <View style={styles.detailCard}>
+                      {detailLines(t).map((row, j) => (
+                        <Text key={j} style={styles.detailLine}>
+                          <Text style={styles.detailLabel}>{row.label}: </Text>
+                          <Text style={styles.detailValue}>{row.value}</Text>
+                        </Text>
+                      ))}
+                    </View>
+                  ) : null}
+                </View>
+              ))}
+            </ScrollView>
           </>
         ) : (
           <Text style={styles.hint}>start typing to filter…</Text>
@@ -125,14 +129,14 @@ const styles = StyleSheet.create({
   input: { fontSize: 18, color: '#E8F4FF', padding: 4 },
   matchLine: { fontSize: 15, color: '#67E8F9' },
   hint: { fontSize: 14, color: '#5F7A92' },
-  rowWrap: { flex: 1, gap: 6 },
-  pressRow: { flex: 1, padding: 6, borderRadius: 10 },
+  resultsScroll: { flex: 1, gap: 8 },
+  rowWrap: { gap: 6, marginBottom: 10 },
+  pressRow: { padding: 8, borderRadius: 10 },
   row: { fontSize: 15, color: '#B9CFE8' },
   badge: { fontSize: 11, fontWeight: '700', color: '#8B5CF6' },
   hit: { fontWeight: '800', color: '#67E8F9' },
   dim: { color: '#B9CFE8' },
   detailCard: {
-    flex: 1,
     padding: 12,
     gap: 4,
     borderRadius: 14,
