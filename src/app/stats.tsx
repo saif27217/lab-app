@@ -4,41 +4,39 @@ import { Text } from 'react-native';
 import { View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { LAB_TESTS } from '@/utils/labTests';
-
-function countMatching(pattern: RegExp) {
-  return LAB_TESTS.reduce((n, t) => pattern.test(t) ? n + 1 : n, 0);
-}
+import { LAB_TEST_RECORDS } from '@/utils/lab-search';
 
 export default function StatsScreen() {
-  const urinal = countMatching(/URINARY/);
-  const hgb = countMatching(/\bHGB\b/);
-  const hcg = countMatching(/\bHCG\b/);
-  const other = LAB_TESTS.length - urinal - hgb - hcg;
+  const total = LAB_TEST_RECORDS.length;
+  const local = LAB_TEST_RECORDS.filter((t) => t.proc_type === 'Local').length;
+  const outsourced = LAB_TEST_RECORDS.filter((t) => t.proc_type === 'OutSource').length;
+  const branch = total - local - outsourced;
+  const routine = LAB_TEST_RECORDS.filter((t) => t.mode === 'Routine').length;
+  const scheduled = LAB_TEST_RECORDS.filter((t) => t.mode === 'Scheduled').length;
+  const withInterp = LAB_TEST_RECORDS.filter((t) => t.interpretation).length;
 
   return (
     <LinearGradient style={styles.fill} colors={['#070D1A', '#10384C', '#070D1A']}>
       <SafeAreaView style={styles.container}>
         <Text style={styles.title}>Catalog stats</Text>
         <View style={styles.card}>
-          <Text style={styles.big}>{LAB_TESTS.length}</Text>
+          <Text style={styles.big}>{total}</Text>
           <Text style={styles.label}>tests on file</Text>
         </View>
         <View style={styles.card}>
-          <Text style={styles.big}>{urinal}</Text>
-          <Text style={styles.label}>urine-based tests</Text>
+          <Text style={styles.big}>{local}</Text>
+          <Text style={styles.label}>in-house tests</Text>
         </View>
         <View style={styles.card}>
-          <Text style={styles.big}>{hgb}</Text>
-          <Text style={styles.label}>hemoglobin (HGB)</Text>
-        </View>
-        <View style={styles.card}>
-          <Text style={styles.big}>{hcg}</Text>
-          <Text style={styles.label}>human chorionic (HCG)</Text>
+          <Text style={styles.big}>{outsourced}</Text>
+          <Text style={styles.label}>outsourced tests</Text>
         </View>
         <View style={styles.footer}>
           <Text style={styles.footerText}>
-            {other} more across serum, whole-blood, and immunoassay analytes
+            {branch} branch-transfer · {routine} routine · {scheduled} scheduled
+          </Text>
+          <Text style={styles.footerText}>
+            {withInterp} with interpretation notes
           </Text>
         </View>
       </SafeAreaView>
