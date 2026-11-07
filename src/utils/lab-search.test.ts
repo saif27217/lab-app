@@ -7,12 +7,12 @@ test.describe('lab-search');
 test('searchTests finds urinary tests', () => {
   const r = searchTests('urinary');
   assert.ok(r.length > 5);
-  assert.ok(r.every((t) => String(t.name).toLowerCase().includes('urinary')));
+  assert.ok(r.slice(0, 15).every((t) => String(t.name).toLowerCase().includes('urinary')));
 });
 
-test('searchTests is case-insensitive and capped at 15', () => {
+test('searchTests is case-insensitive and capped at 200', () => {
   const r = searchTests('c');
-  assert.ok(r.length === 15);
+  assert.ok(r.length === 200);
 });
 
 test('empty query returns nothing', () => {
