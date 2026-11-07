@@ -12,7 +12,7 @@ export default function StatsScreen() {
   const outsourced = LAB_TEST_RECORDS.filter((t) => t.proc_type === 'OutSource').length;
   const branch = total - local - outsourced;
   const routine = LAB_TEST_RECORDS.filter((t) => t.mode === 'Routine').length;
-  const scheduled = LAB_TEST_RECORDS.filter((t) => t.mode === 'Scheduled').length;
+  const scheduled = LAB_TEST_RECORDS.filter((t) => t.mode === 'Schedule').length;
   const withInterp = LAB_TEST_RECORDS.filter((t) => t.interpretation).length;
 
   return (
