@@ -18,7 +18,7 @@ export default function StatsScreen() {
   return (
     <LinearGradient style={styles.fill} colors={['#070D1A', '#10384C', '#070D1A']}>
       <SafeAreaView style={styles.container}>
-        <Text style={styles.title}>Catalog stats</Text>
+        <Text style={styles.title}>{"\u{1F4CA} Catalog stats"}</Text>
         <View style={styles.card}>
           <Text style={styles.big}>{total}</Text>
           <Text style={styles.label}>tests on file</Text>

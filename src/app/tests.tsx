@@ -57,7 +57,7 @@ export default function TestsScreen() {
   return (
     <LinearGradient style={styles.fill} colors={['#070D1A', '#10384C', '#070D1A']}>
       <SafeAreaView style={styles.container}>
-        <Text style={styles.header}>Lab tests — {LAB_TESTS.length} on file</Text>
+        <Text style={styles.header}>{"\u2697\uFE0F Lab tests — "}{LAB_TESTS.length} on file</Text>
         <View style={styles.searchBox}>
           <TextInput
             style={styles.input}
