@@ -11,7 +11,6 @@ import { useState } from 'react';
 import {
   searchTests,
   browseTests,
-  browseLetter,
   letterGroups,
   highlightSegments,
   badgeFor,
@@ -59,16 +58,11 @@ function noteLines(t: Test) {
 
 export default function TestsScreen() {
   const [query, setQuery] = useState('');
-  const [letter, setLetter] = useState('');
   const [openKey, setOpenKey] = useState('');
   const [detailMode, setDetailMode] = useState(0);
 
   const browsing = !query;
-  const matches = query
-    ? searchTests(query)
-    : letter
-      ? browseLetter(letter)
-      : browseTests();
+  const matches = query ? searchTests(query) : browseTests();
   const shown = query ? matches.slice(0, MAX_ROWS) : matches;
   const openTest = openKey ? shown.find((t) => t.name === openKey) : null;
 
@@ -78,32 +72,12 @@ export default function TestsScreen() {
     setDetailMode(0);
   }
 
-  const groups = browsing && !letter ? letterGroups() : [{ letter: '', tests: shown }];
+  const groups = browsing ? letterGroups() : [{ letter: '', tests: shown }];
 
   return (
     <LinearGradient style={styles.fill} colors={['#070D1A', '#10384C', '#070D1A']}>
       <SafeAreaView style={styles.container}>
         <Text style={styles.header}>{"\u2697\uFE0F Lab tests — "}{LAB_TESTS.length} on file</Text>
-
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.chipsScroll}>
-          <Pressable
-            accessibilityLabel={`Show all ${LAB_TESTS.length} tests`}
-            onPress={() => setLetter('')}
-            style={styles.chip}
-          >
-            <Text style={styles.chipText}>All · {LAB_TESTS.length}</Text>
-          </Pressable>
-          {letterGroups().map((g) => (
-            <Pressable
-              key={g.letter}
-              accessibilityLabel={`Filter to tests starting with ${g.letter}, ${g.tests.length} tests`}
-              onPress={() => setLetter(g.letter)}
-              style={styles.chip}
-            >
-              <Text style={styles.chipText}>{g.letter} · {g.tests.length}</Text>
-            </Pressable>
-          ))}
-        </ScrollView>
 
         <View style={styles.searchBox}>
           <TextInput
@@ -117,9 +91,7 @@ export default function TestsScreen() {
         <Text style={styles.matchLine}>
           {query
             ? `${matches.length} match${matches.length === 1 ? '' : 'es'}${matches.length > MAX_ROWS ? ` · showing first ${MAX_ROWS}, scroll for more` : ' · scroll for more'}`
-            : letter
-              ? `${letter} · ${matches.length} tests`
-              : `Full menu · ${matches.length} tests · ${matches.filter((t) => t.proc_type === 'Local').length} in-house · ${matches.filter((t) => t.proc_type === 'OutSource').length} outsourced`}
+            : `Full menu · ${matches.length} tests · ${matches.filter((t) => t.proc_type === 'Local').length} in-house · ${matches.filter((t) => t.proc_type === 'OutSource').length} outsourced`}
         </Text>
 
         <ScrollView style={styles.resultsScroll}>
@@ -214,17 +186,6 @@ const styles = StyleSheet.create({
   fill: { flex: 1, backgroundColor: '#070D1A' },
   container: { flex: 1, padding: 16, gap: 10, backgroundColor: '#070D1A' },
   header: { fontSize: 20, fontWeight: '700', color: '#E8F4FF' },
-  chipsScroll: { height: 34, flexDirection: 'row' },
-  chip: {
-    paddingVertical: 6,
-    paddingHorizontal: 10,
-    borderRadius: 12,
-    marginRight: 6,
-    backgroundColor: 'rgba(103,232,249,0.08)',
-    borderColor: 'rgba(103,232,249,0.35)',
-    borderWidth: 1,
-  },
-  chipText: { fontSize: 12, fontWeight: '700', color: '#8FB8CC' },
   searchBox: {
     padding: 12,
     borderRadius: 18,
