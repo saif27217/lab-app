@@ -58,6 +58,42 @@ export function searchTests(query: string, limit = 200): Test[] {
   return scored.slice(0, limit).map(([, t]) => t);
 }
 
+export function letterFor(t: Test): string {
+  return t.name.charAt(0).toUpperCase();
+}
+
+export function letterGroups(): { letter: string; tests: Test[] }[] {
+  const map = new Map<string, Test[]>();
+  for (const t of browseTests()) {
+    const l = letterFor(t);
+    if (!map.has(l)) map.set(l, []);
+    map.get(l)!.push(t);
+  }
+  return [...map.entries()].sort((a, b) => a[0].localeCompare(b[0])).map(([letter, tests]) => ({ letter, tests }));
+}
+
+export function browseLetter(letter: string): Test[] {
+  return browseTests().filter((t) => letterFor(t) === letter);
+}
+
+export function badgeColor(t: Test): string {
+  if (t.proc_type === 'Local') return '#34D399';
+  if (t.proc_type === 'OutSource') return '#F59E0B';
+  return '#8B5CF6';
+}
+
+export function badgeBg(t: Test): string {
+  if (t.proc_type === 'Local') return 'rgba(52,211,153,0.16)';
+  if (t.proc_type === 'OutSource') return 'rgba(245,158,11,0.16)';
+  return 'rgba(139,92,246,0.18)';
+}
+
+export function badgeBorderColor(t: Test): string {
+  if (t.proc_type === 'Local') return 'rgba(52,211,153,0.55)';
+  if (t.proc_type === 'OutSource') return 'rgba(245,158,11,0.55)';
+  return 'rgba(139,92,246,0.55)';
+}
+
 export function highlightSegments(text: string, query: string): { part: string; hit: boolean }[] {
   const q = query.trim();
   if (!q) return [{ part: text, hit: false }];
