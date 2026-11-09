@@ -59,7 +59,9 @@ export function searchTests(query: string, limit = 200): Test[] {
 }
 
 export function letterFor(t: Test): string {
-  return t.name.charAt(0).toUpperCase();
+  // Names leading with digits/symbols ("24 HOURS URINARY ...", "(1-3)-BETA ...") fold into one '#' group
+  const c = t.name.charAt(0).toUpperCase();
+  return c >= 'A' && c <= 'Z' ? c : '#';
 }
 
 export function letterGroups(): { letter: string; tests: Test[] }[] {
