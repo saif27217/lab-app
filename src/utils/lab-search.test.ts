@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert';
-import { searchTests, highlightSegments, badgeFor, LAB_TEST_RECORDS } from './lab-search.ts';
+import { searchTests, browseTests, highlightSegments, badgeFor, LAB_TEST_RECORDS } from './lab-search.ts';
 
 test.describe('lab-search');
 
@@ -17,6 +17,12 @@ test('searchTests is case-insensitive and capped at 200', () => {
 
 test('empty query returns nothing', () => {
   assert.deepEqual(searchTests('   '), []);
+});
+
+test('browseTests lists the full menu, name-sorted', () => {
+  const r = browseTests();
+  assert.equal(r.length, LAB_TEST_RECORDS.length);
+  assert.ok(r.every((t, i) => i === 0 || r[i - 1].name.localeCompare(t.name) <= 0));
 });
 
 test('name prefix outranks substring', () => {

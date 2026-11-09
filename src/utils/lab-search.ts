@@ -36,6 +36,10 @@ export function vendorFor(t: Test): string {
   return t.b2b || '';
 }
 
+export function browseTests(): Test[] {
+  return [...LAB_TEST_RECORDS].sort((a, b) => a.name.localeCompare(b.name));
+}
+
 export function searchTests(query: string, limit = 200): Test[] {
   const q = query.trim().toLowerCase();
   if (!q) return [];

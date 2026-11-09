@@ -8,7 +8,7 @@ import { Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useState } from 'react';
 
-import { searchTests, highlightSegments, badgeFor, vendorFor, Test } from '@/utils/lab-search';
+import { searchTests, browseTests, highlightSegments, badgeFor, vendorFor, Test } from '@/utils/lab-search';
 import { LAB_TESTS } from '@/utils/labTests';
 
 const MAX_ROWS = 60;
@@ -52,7 +52,8 @@ function detailLines(t: Test) {
 export default function TestsScreen() {
   const [query, setQuery] = useState('');
   const [openId, setOpenId] = useState('');
-  const matches = searchTests(query);
+  const matches = query ? searchTests(query) : browseTests();
+  const shown = query ? matches.slice(0, MAX_ROWS) : matches;
 
   return (
     <LinearGradient style={styles.fill} colors={['#070D1A', '#10384C', '#070D1A']}>
@@ -66,14 +67,13 @@ export default function TestsScreen() {
             onChangeText={setQuery}
           />
         </View>
-        {query ? (
-          <>
-            <Text style={styles.matchLine}>
-              {matches.length} match{matches.length === 1 ? '' : 'es'}
-              {matches.length > MAX_ROWS ? ` · showing first ${MAX_ROWS}, scroll for more` : ' · scroll for more'}
-            </Text>
-            <ScrollView style={styles.resultsScroll}>
-              {matches.slice(0, MAX_ROWS).map((t, i) => (
+        <Text style={styles.matchLine}>
+          {query
+            ? `${matches.length} match${matches.length === 1 ? '' : 'es'}${matches.length > MAX_ROWS ? ` · showing first ${MAX_ROWS}, scroll for more` : ' · scroll for more'}`
+            : `Full menu · ${matches.length} tests · ${matches.filter((t) => t.proc_type === 'Local').length} in-house · ${matches.filter((t) => t.proc_type === 'OutSource').length} outsourced`}
+        </Text>
+        <ScrollView style={styles.resultsScroll}>
+          {shown.map((t, i) => (
                 <View key={i} style={styles.rowWrap}>
                   <Pressable
                     accessibilityLabel={`${badgeFor(t)} ${t.name}. Open details`}
@@ -100,11 +100,7 @@ export default function TestsScreen() {
                   ) : null}
                 </View>
               ))}
-            </ScrollView>
-          </>
-        ) : (
-          <Text style={styles.hint}>start typing to filter…</Text>
-        )}
+        </ScrollView>
         <View style={styles.footer}>
           <Text style={styles.footerText}>
             Catalog: {LAB_TESTS.length} tests · tap a row for details
