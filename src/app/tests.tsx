@@ -23,7 +23,14 @@ import {
 import { LAB_TESTS } from '@/utils/labTests';
 
 const MAX_ROWS = 60;
-const NOTE_CAP = 240;
+const NOTE_BULLETS = 4;
+
+function bulletsOf(value: string): string[] {
+  return value
+    .split(/\.\s+(?=[A-Z0-9(])|\n+/)
+    .map((s) => s.trim().replace(/\.$/, ''))
+    .filter((s) => s.length > 0);
+}
 
 function rowSegments(t: Test, q: string) {
   return highlightSegments(t.name, q).map((seg, i) => (
@@ -148,12 +155,21 @@ export default function TestsScreen() {
                 <View style={[styles.pill, { backgroundColor: badgeBg(openTest), borderColor: badgeBorderColor(openTest) }]}>
                   <Text style={[styles.pillText, { color: badgeColor(openTest) }]}>{badgeFor(openTest)}</Text>
                 </View>
-                <View style={[styles.pill, { backgroundColor: 'rgba(103,232,249,0.10)', borderColor: 'rgba(103,232,249,0.5)' }]}>
-                  <Text style={styles.pillText}>{vendorFor(openTest) || openTest.dept || '—'}</Text>
-                </View>
-                <View style={[styles.pill, { backgroundColor: 'rgba(139,92,246,0.12)', borderColor: 'rgba(139,92,246,0.5)' }]}>
-                  <Text style={styles.pillText}>{openTest.mode || openTest.code || '—'}</Text>
-                </View>
+                {vendorFor(openTest) ? (
+                  <View style={[styles.pill, { backgroundColor: 'rgba(103,232,249,0.10)', borderColor: 'rgba(103,232,249,0.5)' }]}>
+                    <Text style={styles.pillText}>{`Vendor · ${vendorFor(openTest)}`}</Text>
+                  </View>
+                ) : null}
+                {openTest.dept ? (
+                  <View style={[styles.pill, { backgroundColor: 'rgba(45,190,207,0.12)', borderColor: 'rgba(45,190,207,0.55)' }]}>
+                    <Text style={styles.pillText}>{`Dept · ${openTest.dept}`}</Text>
+                  </View>
+                ) : null}
+                {openTest.mode ? (
+                  <View style={[styles.pill, { backgroundColor: 'rgba(139,92,246,0.12)', borderColor: 'rgba(139,92,246,0.5)' }]}>
+                    <Text style={styles.pillText}>{`Mode · ${openTest.mode}`}</Text>
+                  </View>
+                ) : null}
               </View>
               <View style={styles.tatRow}>
                 {tatCells(openTest).map((c, k) => (
@@ -163,14 +179,25 @@ export default function TestsScreen() {
                   </View>
                 ))}
               </View>
-              {noteLines(openTest).map((n, k) => (
-                <Text key={k} style={styles.noteLine}>
-                  <Text style={styles.noteLabel}>{`${n.icon} ${n.label}: `}</Text>
-                  <Text style={styles.noteValue}>
-                    {detailMode === 1 ? n.value : `${n.value.slice(0, NOTE_CAP)}${n.value.length > NOTE_CAP ? ' …tap card to expand' : ''}`}
-                  </Text>
-                </Text>
-              ))}
+              {noteLines(openTest).map((n, k) => {
+                const all = bulletsOf(n.value);
+                const shownBullets = detailMode === 0 ? all.slice(0, NOTE_BULLETS) : all;
+                return [
+                  <Text key={`h${k}`} style={styles.noteLabel}>
+                    {`${n.icon} ${n.label}`}
+                  </Text>,
+                  ...shownBullets.map((b, j) => (
+                    <Text key={`b${k}-${j}`} style={styles.noteBullet}>
+                      {`\u2022 ${b}`}
+                    </Text>
+                  )),
+                  detailMode === 0 && all.length > NOTE_BULLETS ? (
+                    <Text key={`m${k}`} style={styles.noteMore}>
+                      {`+ ${all.length - NOTE_BULLETS} more · tap card for all`}
+                    </Text>
+                  ) : null,
+                ];
+              })}
               <Text style={styles.cardHint}>
                 {detailMode === 0 ? 'tap card → full notes · tap again to close' : 'tap card → close'}
               </Text>
@@ -220,7 +247,7 @@ const styles = StyleSheet.create({
   },
   cardScroll: { gap: 6 },
   cardTitle: { fontSize: 19, fontWeight: '800', color: '#E8F4FF' },
-  pillRow: { flexDirection: 'row', gap: 6 },
+  pillRow: { flexWrap: 'wrap', flexDirection: 'row', gap: 6 },
   pill: {
     paddingVertical: 3,
     paddingHorizontal: 8,
@@ -228,7 +255,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   pillText: { fontSize: 11, fontWeight: '700', color: '#C9DCF0' },
-  tatRow: { flexDirection: 'row', gap: 8 },
+  tatRow: { flexWrap: 'wrap', flexDirection: 'row', gap: 8 },
   tatCell: {
     flexDirection: 'row',
     gap: 6,
@@ -239,8 +266,8 @@ const styles = StyleSheet.create({
   },
   tatValue: { fontSize: 15, fontWeight: '800', color: '#67E8F9' },
   tatLabel: { fontSize: 10, color: '#8FB8CC' },
-  noteLine: { fontSize: 12, color: '#B9CFE8' },
-  noteLabel: { fontSize: 11, fontWeight: '800', color: '#8FB8CC' },
-  noteValue: { fontSize: 12, color: '#B9CFE8' },
+  noteLabel: { fontSize: 13, fontWeight: '800', color: '#8FB8CC' },
+  noteBullet: { fontSize: 13, color: '#C9DCF0', lineHeight: 18, marginLeft: 4 },
+  noteMore: { fontSize: 11, fontStyle: 'italic', color: '#5F7A92' },
   cardHint: { fontSize: 11, color: '#5F7A92' },
 });
