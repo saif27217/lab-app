@@ -23,7 +23,6 @@ import {
 import { LAB_TESTS } from '@/utils/labTests';
 
 const MAX_ROWS = 60;
-const NOTE_BULLETS = 4;
 
 function bulletsOf(value: string): string[] {
   return value
@@ -66,7 +65,6 @@ function noteLines(t: Test) {
 export default function TestsScreen() {
   const [query, setQuery] = useState('');
   const [openKey, setOpenKey] = useState('');
-  const [detailMode, setDetailMode] = useState(0);
 
   const browsing = !query;
   const matches = query ? searchTests(query) : browseTests();
@@ -76,7 +74,6 @@ export default function TestsScreen() {
   function onText(v: string) {
     setQuery(v);
     setOpenKey('');
-    setDetailMode(0);
   }
 
   const groups = browsing ? letterGroups() : [{ letter: '', tests: shown }];
@@ -111,10 +108,7 @@ export default function TestsScreen() {
                   accessibilityLabel={`${badgeFor(t)} ${t.name}. Open details`}
                   accessibilityHint="Shows the full test details card"
                   onPress={() => {
-                    if (!openKey) {
-                      setOpenKey(t.name);
-                      setDetailMode(0);
-                    }
+                    setOpenKey(t.name);
                   }}
                   style={styles.pressRow}
                 >
@@ -137,18 +131,7 @@ export default function TestsScreen() {
         </View>
 
         {openTest ? (
-          <Pressable
-            accessibilityLabel={`Details card for ${openTest.name}. Tap to ${detailMode === 0 ? 'expand notes' : 'close'}`}
-            onPress={() => {
-              if (detailMode === 0) {
-                setDetailMode(1);
-              } else {
-                setOpenKey('');
-                setDetailMode(0);
-              }
-            }}
-            style={styles.cardSheet}
-          >
+          <View key="sheet" style={styles.cardSheet}>
             <ScrollView style={styles.cardScroll}>
               <Text style={styles.cardTitle}>{openTest.name}</Text>
               <View style={styles.pillRow}>
@@ -181,28 +164,29 @@ export default function TestsScreen() {
               </View>
               {noteLines(openTest).map((n, k) => {
                 const all = bulletsOf(n.value);
-                const shownBullets = detailMode === 0 ? all.slice(0, NOTE_BULLETS) : all;
                 return [
                   <Text key={`h${k}`} style={styles.noteLabel}>
                     {`${n.icon} ${n.label}`}
                   </Text>,
-                  ...shownBullets.map((b, j) => (
+                  ...all.map((b, j) => (
                     <Text key={`b${k}-${j}`} style={styles.noteBullet}>
                       {`\u2022 ${b}`}
                     </Text>
                   )),
-                  detailMode === 0 && all.length > NOTE_BULLETS ? (
-                    <Text key={`m${k}`} style={styles.noteMore}>
-                      {`+ ${all.length - NOTE_BULLETS} more · tap card for all`}
-                    </Text>
-                  ) : null,
                 ];
               })}
               <Text style={styles.cardHint}>
-                {detailMode === 0 ? 'tap card → full notes · tap again to close' : 'tap card → close'}
+                Scroll the card to read · ✕ closes · tap another row to swap
               </Text>
             </ScrollView>
-          </Pressable>
+            <Pressable
+              accessibilityLabel="Close details card"
+              onPress={() => setOpenKey('')}
+              style={styles.closeBtn}
+            >
+              <Text style={styles.closeText}>{'\u2715'}</Text>
+            </Pressable>
+          </View>
         ) : null}
       </SafeAreaView>
     </LinearGradient>
@@ -236,6 +220,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 16,
     right: 16,
+    top: 132,
     bottom: 10,
     zIndex: 5,
     borderRadius: 18,
@@ -245,7 +230,7 @@ const styles = StyleSheet.create({
     padding: 14,
     gap: 8,
   },
-  cardScroll: { gap: 6 },
+  cardScroll: { flex: 1, gap: 6 },
   cardTitle: { fontSize: 19, fontWeight: '800', color: '#E8F4FF' },
   pillRow: { flexWrap: 'wrap', flexDirection: 'row', gap: 6 },
   pill: {
@@ -268,6 +253,17 @@ const styles = StyleSheet.create({
   tatLabel: { fontSize: 10, color: '#8FB8CC' },
   noteLabel: { fontSize: 13, fontWeight: '800', color: '#8FB8CC' },
   noteBullet: { fontSize: 13, color: '#C9DCF0', lineHeight: 18, marginLeft: 4 },
-  noteMore: { fontSize: 11, fontStyle: 'italic', color: '#5F7A92' },
   cardHint: { fontSize: 11, color: '#5F7A92' },
+  closeBtn: {
+    position: 'absolute',
+    top: 4,
+    right: 4,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(20,40,60,0.9)',
+    borderColor: 'rgba(255,120,140,0.6)',
+    borderWidth: 1,
+  },
+  closeText: { fontSize: 20, fontWeight: '800', color: '#FF7B8C' },
 });
