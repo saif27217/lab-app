@@ -93,9 +93,9 @@ export default function TestsScreen() {
           >
             <Text style={styles.chipText}>All · {LAB_TESTS.length}</Text>
           </Pressable>
-          {letterGroups().map((g, i) => (
+          {letterGroups().map((g) => (
             <Pressable
-              key={i}
+              key={g.letter}
               accessibilityLabel={`Filter to tests starting with ${g.letter}, ${g.tests.length} tests`}
               onPress={() => setLetter(g.letter)}
               style={styles.chip}
@@ -123,12 +123,12 @@ export default function TestsScreen() {
         </Text>
 
         <ScrollView style={styles.resultsScroll}>
-          {groups.map((g, gi) => (
-            <View key={gi} style={styles.groupWrap}>
+          {groups.map((g) => (
+            <View key={g.letter || 'all'} style={styles.groupWrap}>
               {g.letter ? <Text style={styles.groupHeader}>{`\u{1F537} ${g.letter} · ${g.tests.length}`}</Text> : null}
-              {g.tests.map((t, i) => (
+              {g.tests.map((t) => (
                 <Pressable
-                  key={i}
+                  key={t.code || t.name}
                   accessibilityLabel={`${badgeFor(t)} ${t.name}. Open details`}
                   accessibilityHint="Shows the full test details card"
                   onPress={() => {
